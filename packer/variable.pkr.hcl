@@ -24,7 +24,6 @@ variable "node" {
   description = "same as dir name present in /etc/pve/nodes else error 596 tls_process_server_certificate"
 }
 
-
 variable "iso_file" {
   type    = string
   default = "local:iso/AlmaLinux-8.5-x86_64-minimal.iso"

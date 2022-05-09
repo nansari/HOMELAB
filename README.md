@@ -4,13 +4,13 @@ VMs, LXC container, kubernetes in the Homelab learning environment
 # Diagram
 ![homelab diagram](homelab.jpg)
 
-## Hardware
+# Hardware
 Choose fasted SSD if plan to run high number of VMs
 * [NUC11PAHi50000](https://ark.intel.com/content/www/us/en/ark/products/205040/intel-nuc-11-performance-kit-nuc11pahi5.html) Intel Core i5-1135G7 @ 2.40GHz, Quad Core, 8 Threads
 * 1x 32GB DDR4-3200MHz
 * SAMSUNG 980 PCIE 3.0 NVME M.2 500GB SSD
 
-## Proxmox
+# Proxmox
 Install [Proxmox VE](https://www.proxmox.com) (pve) Open Source Server Management platform. It provides:
 1. KVM Hyperviser
 1. Linux Containers (LXC)
@@ -22,8 +22,7 @@ Install [Proxmox VE](https://www.proxmox.com) (pve) Open Source Server Managemen
 - [Remove Proxmox Subscription Notice](https://johnscs.com/remove-proxmox51-subscription-notice/)
 
 
-
-## First VM
+# First VM - Manual
 
 ### Create VM
 Create a VM with 16GB disk, 2GB RAM and leaving everything default. 
@@ -54,12 +53,23 @@ Create a VM with 16GB disk, 2GB RAM and leaving everything default.
 
 Note: if DNS resolve is not working, comment nameserver line and add `nameserver 8.8.8.8` in /etc/resolv.conf and run `systemctl restart systemd-resolved`
 
-### Puppet
+---
+
+# Puppet
+
+**DIR/FILE:** ./terraform/puppet & /puppet_code/production/my_modules
+Puppet master VM build and installation is done by terraform. Code is [here](terraform/puppet/main.tf)
 
 Refer [this](https://puppet.com/docs/puppet/7/install_and_configure.html) for puppetserver and agent installtion and configuration.
 * Adjust memory size in JAVA_ARGS in /etc/sysconfig/puppetserver if puppetserver fails to start
 
 Puppet master VM build and installation is done by terraform. Code is [here](terraform/puppet/main.tf)
+**DIR/FILE:** /puppet_code/production/my_modules/
+
+./bind_dns/ : puppet to to install and configure BIND DNS on LXC container
+
+
+TODO: Find how to install puppet agent on each VM and Container at creation time and configure it.
 
 ```bash
 rpm -Uvh https://yum.puppet.com/puppet7-release-el-8.noarch.rpm
@@ -67,8 +77,8 @@ rpm -Uvh https://yum.puppet.com/puppet7-release-el-8.noarch.rpm
 yum install -y puppet-agent
 ```
 
-### QEMU Guest Agent
-Enable QEMU Guest Aget uption undet Options of VM and do following
+# QEMU Guest Agent
+Enable QEMU Guest Agent option under Options of VM and do following
 ```bash
 yum install -y qemu-guest-agent
 yum update -y
@@ -76,9 +86,11 @@ yum update -y
 systemctl enable --now qemu-guest-agent
 systemctl start  qemu-guest-agent
 ```
+It is being installed on each VM and LXC containser via terraform at build time.
 
+Puppet will ensure it it running all time.
 
-### cloud-init
+# cloud-init
 
 **DIR/FILE:** ./cloudinit/cloud.cfg
 
@@ -133,7 +145,7 @@ nano /etc/hostname
 ```
 ---
 
-## kickstart
+# kickstart
 **DIR/FILE:** ./kickstart/almalinux_8_ks.cfg
 
 Alamalinux(Redhat Linux) automatically created /root/anaconda-ks.cfg on installation. Taken file from above VM and modified little bit to create image using packer (below section). kickstart reference doc is [here](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/performing_an_advanced_rhel_installation/kickstart-commands-and-options-reference_installing-rhel-as-an-experienced-user).
@@ -147,7 +159,7 @@ ksvalidator -v RHEL8 <ks-file.cfg>
 ```
 
 
-## Hashicorp Packer
+# Hashicorp Packer
 **DIR/FILE:** ./packer/
 Packer is a tool to install a VM and pack newly installed VM to an image in one command - hence packer. Installation is well documented. [This](https://www.packer.io/plugins/builders/proxmox/iso) document has details of valiables to create image from iso. 
 
@@ -194,7 +206,7 @@ Packer is a tool to install a VM and pack newly installed VM to an image in one 
 This one had common variable that can be consumed by other terraform module - such as ssh public ket and credential of proxmox VE
 
 **DIR/FILE:** ./terraform/puppet/
-A workspace that will build a Puppet Master VM using template image created by Packer. It will install puppetserver and puppet-agent via `remote-exec` provisioner
+A workspace that will build a Puppet Master VM using template image created by Packer. It will install puppetserver and puppet-agent via `remote-exec` provisioner.
 
 
 # BIND DNS
@@ -208,13 +220,26 @@ It is hosting family.net forward and reverse zone.
 Running on LXC container instead VM as it has one and only one simple job to do.
 
 
+---
+# kubernetes
+**DIR/FILE:** ./terraform/kubernetes/
+Terraform will provision a master and 2 nodes using configuration [here](./terraform/kubernetes/)
+TODO: certificate creation and node join
+
+# MySQL
+TODO
+
+# Jenkins
+TODO
+
+# Final Section
 ## References
  
 * [PVE documentataion](https://pve.proxmox.com/pve-docs/)
 
 ## Credit
   * [David Cooper](https://www.linkedin.com/in/david-cooper-8a57031/) for sharing knowledge
-  * [LearnLinuxTV](https://www.youtube.com/watch?v=LCjuiIswXGs&list=PLT98CRl2KxKHnlbYhtABg6cF50bYa8Ulo)
+  * [LearnLinuxTV](https://www.youtube.com/watch?v=LCjuiIswXGs&list=PLT98CRl2KxKHnlbYhtABg6cF50bYa8Ulo) Proxmox Playlist
 
-## My proxmox
+## My Proxmox VE
 ![proxmox](proxmox.png)
