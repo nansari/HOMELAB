@@ -19,6 +19,6 @@ variable "buildhosts" {
   }
 }
 
-variable "workspace" {
-  default = "puppet"
-}
+# variable "workspace" {
+#   default = "puppet"
+# }

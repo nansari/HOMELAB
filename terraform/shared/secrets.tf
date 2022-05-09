@@ -1,10 +1,1 @@
-variable "secret" {
-  #TODO: explore be moved them somewhere else rather hardcoding here as string.
-  sensitive = true
-  default = {
-    # DO NOT COMMIT REAL PASSWORD!!!!!!!!!!!!!!!!!!!!!!!!!!
-    "pve_password" = "xxxxxxxxxx"
-    "ssh_password" = "xxxxxxxxx"
-  }
-  description = "default secrets and credential those need to be used across all terraform workspaces (directories)"
-}
+../../../do_not_commit/secrets.tf

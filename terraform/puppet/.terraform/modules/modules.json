@@ -1,0 +1,1 @@
+{"Modules":[{"Key":"shared_module","Source":"../shared","Dir":"../shared"},{"Key":"","Source":"","Dir":"."},{"Key":"shared","Source":"../shared","Dir":"../shared"},{"Key":"common","Source":"../shared/common","Dir":""},{"Key":"secret","Source":"../shared/secret","Dir":""}]}

@@ -82,6 +82,7 @@ systemctl start  qemu-guest-agent
 
   
 Sample config file used in the setup.
+NOTE: cloud-init drive must be atttache to pass variable to host!
 
 ```bash
 yum install cloud-init -y
@@ -196,3 +197,6 @@ Packer is a tool to install a VM and pack newly installed VM to an image in one 
 ## Credit
   * [David Cooper](https://www.linkedin.com/in/david-cooper-8a57031/) for sharing knowledge
   * [LearnLinuxTV](https://www.youtube.com/watch?v=LCjuiIswXGs&list=PLT98CRl2KxKHnlbYhtABg6cF50bYa8Ulo)
+
+## My proxmox
+![proxmox](proxmox.png)

@@ -36,6 +36,11 @@
 #   default = "https://pve:8006/api2/json"
 # }
 
+variable "cloud_init_storage_pool" {
+  type    = string
+  default = "local-lvm"
+}
+
 variable "template_name" {
   type    = string
   default = "almalinux8"

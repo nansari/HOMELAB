@@ -38,6 +38,9 @@ source "proxmox" "myproxmox" {
 
   insecure_skip_tls_verify = "${var.insecure_skip_tls_verify}"
   http_directory           = "${var.http_directory}"
+  # below line is required to attach cloud-init drive in template so that varible such as fix IP address can be passed during build
+  cloud_init               = true
+  cloud_init_storage_pool  = "${var.cloud_init_storage_pool}"
   # filename in below need to be converted to variable - for now it is hard coded.
   boot_command = ["<up><tab> ip=dhcp inst.sshd inst.cmdline inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/almalinux_8_ks.cfg<enter>"]
 }
