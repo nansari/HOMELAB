@@ -1,9 +1,9 @@
 # 
 class bind_dns::bind_dns (
-  # need to be supplied via hiera for DNS server node.yaml
+  # need to be supplied via hiera common.yaml
   $dns_vm_ip = undef
 ){
-  if ( $dns_vm_ip != undef) {
+  if ( $dns_vm_ip == $facts['networkin']['ip'] ) {
   $bind_packages = [ 'bind', 'bind-chroot', 'bind-utils', ]
     package { $bind_packages:
     ensure => installed,
