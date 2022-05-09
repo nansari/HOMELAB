@@ -30,15 +30,6 @@ resource "proxmox_vm_qemu" "puppet_vm" {
   scsihw   = "virtio-scsi-pci"
   bootdisk = "scsi0"
   ipconfig0 = "ip=${each.value.ipv4}/24,gw=${each.value.gateway}"
-  #define_connection_info = true
-#   os_network_config = <<EOF
-# auto ens18
-# iface ens18 inet static
-# EOF
-
-#   lifecycle {
-#     ignore_changes = [network, ]
-#   }
 
   provisioner "remote-exec" {
     inline = [
@@ -68,8 +59,7 @@ resource "proxmox_vm_qemu" "puppet_vm" {
       type = "ssh"
       user = "root"
       private_key = file(module.shared.common.private_key_file)
-      # add a local /etc/hosts entry before running apply
-      host = each.value.hostname
+      host = each.value.ip4
     }
   }
 }

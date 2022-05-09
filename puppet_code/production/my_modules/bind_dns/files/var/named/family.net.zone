@@ -1,0 +1,24 @@
+; Authoritative data for family.net zone
+;
+$TTL 1D
+@   IN SOA  epc.family.net   root.epc.family.net. (
+                                       2017031301      ; serial
+                                       1D              ; refresh
+                                       1H              ; retry
+                                       1W              ; expire
+                                       3H )            ; minimum
+
+$ORIGIN         family.net.
+family.net.           IN      NS      dns.family.net.
+;dns                  IN      A       127.0.0.1
+;server               IN      A       192.168.10.1
+;www                  IN      CNAME   server
+pve                   IN      A       192.168.10.50
+dns                   IN      A       192.168.10.53
+k8smaster             IN      A       192.168.10.55
+k8snode1              IN      A       192.168.10.56
+k8snode2              IN      A       192.168.10.57
+puppet                IN      A       192.168.10.60
+
+; Mail server MX record
+family.net.            IN      MX      10      mail.family.net.

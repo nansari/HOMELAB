@@ -1,5 +1,4 @@
 variable "common" {
-  #TODO: explore be moved them somewhere else rather hardcoding here as string.
   sensitive = false
   default = {
     #TODO: also used in packer's variables.auto.pkrvars.hcl, can it be shared?
@@ -13,17 +12,4 @@ variable "common" {
   }
   description = "default non-secret shared variables those need to be used across all terraform workspaces (directories)"
 }
-
-# variable "vm" {
-#   default = {
-#     vm_dns_servers = ["192.168.86.237", "192.168.86.110"]
-#     vm_dns_domain  = "family.net"
-#     vm_dns_search  = ["family.net"]
-#     vm_default_gw  = "192.168.10.1"
-#     vm_netmask     = "24"
-#     puppet_master  = "puppet.family.net"
-#   }
-# }
-
-
 

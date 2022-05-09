@@ -13,12 +13,8 @@ variable "buildhosts" {
       datastore      = "local-lvm"
       ipv4           = "192.168.10.60"
       gateway        = "192.168.10.1"
-      macaddr        = "2a:31:71:7a:ed:21"
+      macaddr        = "2a:31:71:7a:ed:60"
       autostart      = true
     }
   }
 }
-
-# variable "workspace" {
-#   default = "puppet"
-# }

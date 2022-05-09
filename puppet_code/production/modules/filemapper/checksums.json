@@ -1,0 +1,13 @@
+{
+  "CHANGELOG.md": "42d2bc78df3c544de0b5b9559f42193a",
+  "Gemfile": "156e4030507e9782dedafee207894278",
+  "HISTORY.md": "2329b75463c33ed266a6414cbb2d6228",
+  "LICENSE": "ea91bbde63274129aab906e2feb58a42",
+  "README.md": "b6e1fa9092ccbe9b543cb40c0e6b19b1",
+  "Rakefile": "90f5e04fcf98664dfce089ec2dae2109",
+  "lib/puppetx/filemapper.rb": "bc88929ad5427f6f903d5aceae7f1143",
+  "manifests/init.pp": "19aee637a424567c7ef393b7212414b6",
+  "metadata.json": "3bed83d1cf89060b89fb2e4f50c54abd",
+  "spec/spec_helper.rb": "19a9645850aec0da40348bcc38035f5f",
+  "spec/unit/puppetx/filemapper_spec.rb": "7477863c19f2a09e20947215bbcb52fe"
+}

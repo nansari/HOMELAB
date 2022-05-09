@@ -1,0 +1,9 @@
+**/*backup/**
+**/*log
+**/*old
+**/*org
+**/*secrets.tf
+**/.terraform/**
+**/module
+**/terraform.d
+**/terraform.tfstate.backup

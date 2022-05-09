@@ -55,12 +55,14 @@ Create a VM with 16GB disk, 2GB RAM and leaving everything default.
 Note: if DNS resolve is not working, comment nameserver line and add `nameserver 8.8.8.8` in /etc/resolv.conf and run `systemctl restart systemd-resolved`
 
 ### Puppet
+
 Refer [this](https://puppet.com/docs/puppet/7/install_and_configure.html) for puppetserver and agent installtion and configuration.
 * Adjust memory size in JAVA_ARGS in /etc/sysconfig/puppetserver if puppetserver fails to start
-* 
+
+Puppet master VM build and installation is done by terraform. Code is [here](terraform/puppet/main.tf)
 
 ```bash
-rpm -Uvh https://yum.puppet.com/puppet6-release-el-8.noarch.rpm
+rpm -Uvh https://yum.puppet.com/puppet7-release-el-8.noarch.rpm
 #yum install -y puppetserver
 yum install -y puppet-agent
 ```
@@ -188,7 +190,23 @@ Packer is a tool to install a VM and pack newly installed VM to an image in one 
 ---  
 
 # Hashicorp Terraform
-**DIR/FILE:** ./terraform/
+**DIR/FILE:** ./terraform/shared/
+This one had common variable that can be consumed by other terraform module - such as ssh public ket and credential of proxmox VE
+
+**DIR/FILE:** ./terraform/puppet/
+A workspace that will build a Puppet Master VM using template image created by Packer. It will install puppetserver and puppet-agent via `remote-exec` provisioner
+
+
+# BIND DNS
+**DIR/FILE:** ./puppet_code/production/my_modules/bind_dns/manifests/bind_dns.pp
+
+Why bind? because I have worked on this extensively in my previous role.
+
+Puppet code will install required rpms and copy config files from modules' files directory.
+
+It is hosting family.net forward and reverse zone.
+Running on LXC container instead VM as it has one and only one simple job to do.
+
 
 ## References
  

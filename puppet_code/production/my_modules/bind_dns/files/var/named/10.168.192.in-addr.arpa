@@ -1,0 +1,20 @@
+; Authoritative data for family.net  reverse zone
+;
+$TTL 1D
+@   IN SOA  test1.family.net   root.test1.family.net. (
+                                        2017031501      ; serial
+                                        1D              ; refresh
+                                        1H              ; retry
+                                        1W              ; expire
+                                        3H )            ; minimum
+
+@       IN      NS      dns.family.net.
+family.net.    IN      NS      dns.family.net.
+;1              IN      PTR     mail.family.net.
+;1              IN      PTR     server.family.net.
+50              IN      PTR     pve.family.net.
+53              IN      PTR     dns.family.net.
+55              IN      PTR     k8smaster.family.net.
+56              IN      PTR     k8snode1.family.net.
+57              IN      PTR     k8snode2.family.net.
+60              IN      PTR     puppet.family.net.
