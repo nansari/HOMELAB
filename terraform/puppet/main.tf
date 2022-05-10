@@ -2,8 +2,8 @@ resource "proxmox_vm_qemu" "puppet_vm" {
   # https://registry.terraform.io/providers/Telmate/proxmox/latest/docs/resources/vm_qemu
   for_each = var.buildhosts
 
-  agent    = 1            # defaule is 0. Set to 1 to enable the QEMU Guest Agent. The qemu-guest-agent daemon sshould run in the guest for this to have any effect.
-  os_type  = "cloud-init" # ubuntu, centos or cloud-init
+  agent   = 1            # defaule is 0. Set to 1 to enable the QEMU Guest Agent. The qemu-guest-agent daemon sshould run in the guest for this to have any effect.
+  os_type = "cloud-init" # ubuntu, centos or cloud-init
 
   name        = each.value.hostname
   vmid        = each.value.vmid
@@ -24,22 +24,39 @@ resource "proxmox_vm_qemu" "puppet_vm" {
     macaddr  = each.value.macaddr
     firewall = false
   }
-  sshkeys   = module.shared.common.ssh_pub_key
+  sshkeys = module.shared.common.ssh_pub_key
 
-  cpu      = "host"   # qemu host type - host, kvm64 - default to host
-  scsihw   = "virtio-scsi-pci"
-  bootdisk = "scsi0"
+  cpu       = "host" # qemu host type - host, kvm64 - default to host
+  scsihw    = "virtio-scsi-pci"
+  bootdisk  = "scsi0"
   ipconfig0 = "ip=${each.value.ipv4}/24,gw=${each.value.gateway}"
 
   provisioner "remote-exec" {
     inline = [
-      "/usr/bin/hostnamectl set-hostname ${each.value.hostname}",
+      "/usr/bin/hostnamectl set-hostname ${each.value.hostname}.${each.value.domain}",
+      "reboot",
+    ]
+    on_failure = continue # applies only to the final command in the list
+    connection {
+      type        = "ssh"
+      user        = "root"
+      private_key = file(module.shared.common.private_key_file)
+      host        = each.value.ip4
+    }
+  }
+
+  provisioner "local-exec" {
+    command = "sleep 45"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
       # install Puppet server 7 plus agent on AlmaLinux 8
       # https://puppet.com/docs/puppet/7/install_and_configure.html
       "dnf install -y https://yum.puppet.com/puppet7-release-el-8.noarch.rpm",
       "dnf install -y git puppetserver",
       "sed -i 's/2g/1g/g' /etc/sysconfig/puppetserver",
-      "echo 192.168.10.60 puppet >> /etc/hosts",
+      "echo 192.168.10.60 puppet.family.net puppet >> /etc/hosts",
       "/opt/puppetlabs/bin/puppet config set server puppet  --section main",
       "/opt/puppetlabs/bin/puppet config set server puppet  --section agent",
       "/opt/puppetlabs/bin/puppet config set interval 30m  --section agent",
@@ -56,10 +73,10 @@ resource "proxmox_vm_qemu" "puppet_vm" {
     ]
     on_failure = continue # applies only to the final command in the list
     connection {
-      type = "ssh"
-      user = "root"
+      type        = "ssh"
+      user        = "root"
       private_key = file(module.shared.common.private_key_file)
-      host = each.value.ip4
+      host        = each.value.ip4
     }
   }
 }
