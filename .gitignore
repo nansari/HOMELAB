@@ -7,4 +7,4 @@
 **/module
 **/terraform.d
 **/terraform.tfstate.backup/**
-**/.terraform.lock.hcl
+**/.terraform.lock.hcl/**
