@@ -77,6 +77,22 @@ rpm -Uvh https://yum.puppet.com/puppet7-release-el-8.noarch.rpm
 yum install -y puppet-agent
 ```
 
+**Puppet agent certificate regeneration**
+* On agent as per [this](https://puppet.com/docs/puppet/7/ssl_regenerate_certificates.html)
+  ```
+  puppet resource service puppet ensure=stopped
+  rm -rf $(puppet config print ssldir --section agent)
+  puppet resource service puppet ensure=running
+  ```
+* On puppet master
+  ```
+  puppetserver ca list --all
+  puppetserver ca clean --certname <agent.cert.name>
+  puppetserver ca clean --certname <agent.cert.name>
+  puppetserver ca list #anything pending?
+  puppetserver ca sign --certname <agent.cert.name>
+  ```
+
 # QEMU Guest Agent
 Enable QEMU Guest Agent option under Options of VM and do following
 ```bash
@@ -200,6 +216,32 @@ Packer is a tool to install a VM and pack newly installed VM to an image in one 
   nasim@nau22:~/git/homelab/packer$ 
   ```
 ---  
+# Proxmox LXC Container Template
+LXC container by default does not have ssh server enabled. 
+
+Create your own template with ssh server installed and enabled so that terraform can use remote-exec provider to do post creation steps after creating new LXC container after cloning it.
+
+* Create a container almalinux8ct using `Create CT`
+* choose all default option
+* Power it on
+* Add an IP address and install ssh server
+```bash
+ip addr add 192.168.10.99 dev eth0@if13
+ip route add 192.168.10.1 dev eth0
+ip route add default via 192.168.10.1
+ip link set eth0 up
+dnf update -y
+dnf -y install openssh-server
+/usr/bin/systemctl enable sshd
+sed -i 's/^PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+rm -f /etc/ssh/ssh_host_*
+truncate -s 0 /etc/machine-id
+ln -fs /etc/machine-id /var/lib/dbus/machine-id
+yum clean all
+date > /etc/birth_certificate
+shutdown -h 0
+```
+* Right click on LXC container and "Conver to Template"
 
 # Hashicorp Terraform
 **DIR/FILE:** ./terraform/shared/
@@ -212,15 +254,15 @@ A workspace that will build a Puppet Master VM using template image created by P
 # BIND DNS
 **DIR/FILE:** ./puppet_code/production/my_modules/bind_dns/manifests/bind_dns.pp
 
-Why bind? because I have worked on this extensively in my previous role.
+Why bind? Because I have worked on this extensively in my previous role.
 
-Puppet code will install required rpms and copy config files from modules' files directory.
+Puppet code will install required rpms and copy config files from files directory of the module.
 
-It is hosting family.net forward and reverse zone.
-Running on LXC container instead VM as it has one and only one simple job to do.
+It is hosting family.net forward and reverse zone. Running on LXC container instead VM as it has one and only one simple job to do.
 
 
 ---
+
 # kubernetes
 **DIR/FILE:** ./terraform/kubernetes/
 Terraform will provision a master and 2 nodes using configuration [here](./terraform/kubernetes/)

@@ -1,11 +1,12 @@
 resource "proxmox_vm_qemu" "puppet_vm" {
-  # https://registry.terraform.io/providers/Telmate/proxmox/latest/docs/resources/vm_qemu
+  # Resource to create VM from VM Template https://registry.terraform.io/providers/Telmate/proxmox/latest/docs/resources/vm_qemu
   for_each = var.buildhosts
 
   agent   = 1            # defaule is 0. Set to 1 to enable the QEMU Guest Agent. The qemu-guest-agent daemon sshould run in the guest for this to have any effect.
   os_type = "cloud-init" # ubuntu, centos or cloud-init
 
   name        = each.value.hostname
+  desc        = each.value.description
   vmid        = each.value.vmid
   target_node = each.value.target_node
   clone       = each.value.clone_template
@@ -33,7 +34,9 @@ resource "proxmox_vm_qemu" "puppet_vm" {
 
   provisioner "remote-exec" {
     inline = [
-      "/usr/bin/hostnamectl set-hostname ${each.value.hostname}.${each.value.domain}",
+      "/usr/bin/hostnamectl set-hostname ${each.value.fqdn}",
+      "/usr/bin/timedatectl set-timezone 'Asia/Singapore'",
+      "/usr/bin/systemctl disable firewalld",
       "reboot",
     ]
     on_failure = continue # applies only to the final command in the list
@@ -41,7 +44,7 @@ resource "proxmox_vm_qemu" "puppet_vm" {
       type        = "ssh"
       user        = "root"
       private_key = file(module.shared.common.private_key_file)
-      host        = each.value.ip4
+      host        = each.value.ipv4
     }
   }
 
@@ -54,19 +57,20 @@ resource "proxmox_vm_qemu" "puppet_vm" {
       # install Puppet server 7 plus agent on AlmaLinux 8
       # https://puppet.com/docs/puppet/7/install_and_configure.html
       "dnf install -y https://yum.puppet.com/puppet7-release-el-8.noarch.rpm",
-      "dnf install -y git puppetserver",
+      "dnf install -y git puppetserver qemu-guest-agent",
       "sed -i 's/2g/1g/g' /etc/sysconfig/puppetserver",
+      'echo JAVA_ARGS="$JAVA_ARGS -Djava.net.preferIPv4Stack=true" >> /etc/sysconfig/puppetserver',
       "echo 192.168.10.60 puppet.family.net puppet >> /etc/hosts",
-      "/opt/puppetlabs/bin/puppet config set server puppet  --section main",
-      "/opt/puppetlabs/bin/puppet config set server puppet  --section agent",
+      "/opt/puppetlabs/bin/puppet config set server puppet.family.net  --section main",
+      "/opt/puppetlabs/bin/puppet config set server puppet.family.net  --section agent",
+      "/opt/puppetlabs/bin/puppet config set certname ${each.value.fqdn} --section agent",
       "/opt/puppetlabs/bin/puppet config set interval 30m  --section agent",
       "echo '*' >> /etc/puppetlabs/puppet/autosign.conf",
       #"/opt/puppetlabs/bin/puppet config print ssldir --section agent",
       "cd /etc/puppetlabs/code/environments && rm -rf production && git clone https://github.com/nansari/homelab.git && ln -s homelab/puppet_code/production production",
       "/opt/puppetlabs/bin/puppetserver ca setup",
       "/opt/puppetlabs/bin/puppetserver ca list --all",
-      "/usr/bin/systemctl enable puppetserver puppet",
-      "/usr/bin/systemctl stop firewalld",
+      "/usr/bin/systemctl enable puppetserver puppet qemu-guest-agent",
       "/usr/bin/systemctl start puppetserver puppet",
       "/opt/puppetlabs/bin/puppet agent -tv",
       "reboot",
@@ -76,7 +80,7 @@ resource "proxmox_vm_qemu" "puppet_vm" {
       type        = "ssh"
       user        = "root"
       private_key = file(module.shared.common.private_key_file)
-      host        = each.value.ip4
+      host        = each.value.ipv4
     }
   }
 }

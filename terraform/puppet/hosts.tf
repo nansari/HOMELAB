@@ -3,7 +3,8 @@ variable "buildhosts" {
   default = {
     "puppet" = {
       hostname       = "puppet"
-      domain         = "family.net"
+      description    = "Puppet VM"
+      fqdn           = "puppet.family.net"
       vmid           = "160"
       target_node    = "pve"
       clone_template = "almalinux8"
