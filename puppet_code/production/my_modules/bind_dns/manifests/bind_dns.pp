@@ -1,12 +1,12 @@
 # 
 class bind_dns::bind_dns (
   # need to be supplied via hiera common.yaml
-  $dns_vm_ip = undef
-){
-  if ( $dns_vm_ip == $facts['networkin']['ip'] ) {
-  $bind_packages = [ 'bind', 'bind-chroot', 'bind-utils', ]
+  $dns_shortname = undef,
+) {
+  if ( $dns_shortname == $facts['hostname']) {
+    $bind_packages = [ 'bind', 'bind-chroot', 'bind-utils', ]
     package { $bind_packages:
-    ensure => installed,
+      ensure => installed,
     }
 
     file {
@@ -15,32 +15,32 @@ class bind_dns::bind_dns (
         owner  => 'root',
         group  => 'named',
         notify => Service['named'],
-        source => 'puppet://modules/modules/bind_dns/etc/named.conf';
+        source => 'puppet:///modules/bind_dns/etc/named.conf';
 
       '/var/named/10.168.192.in-addr.arpa':
         mode   => '0644',
         owner  => 'root',
         group  => 'root',
         notify => Service['named'],
-        source => 'puppet://modules/modules/bind_dns/var/named/10.168.192.in-addr.arpa';
+        source => 'puppet:///modules/bind_dns/var/named/10.168.192.in-addr.arpa';
 
-      '/etc/named.conf':
+      '/var/named/family.net.zone':
         mode   => '0644',
         owner  => 'root',
         group  => 'root',
         notify => Service['named'],
-        source => 'puppet://modules/modules/bind_dns/var/named/family.net.zone';
+        source => 'puppet:///modules/bind_dns/var/named/family.net.zone';
       }
 
     service { 'named':
       ensure => running,
       enable => true;
-      }
+    }
 
     file_line { 'nameserver_in_resolv_conf':
       ensure            => present,
       path              => '/etc/resolv.conf',
-      line              => "nameserver ${dns_vm_ip}",
+      line              => "nameserver ${facts['networking']['ip']}",
       match             => '^nameserver ',
       match_for_absence => true,
     }

@@ -1,2 +1,8 @@
 ---
-$bind_dns::bind_dns::dns_vm_ip = "192.168.10.53"
+bind_dns::bind_dns::dns_shortname: dns
+common::resolv::nameservers:
+ - 192.168.10.53
+ - 192.168.10.1
+ - 8.8.8.8
+common::resolv::search: family.net some.other.domain.com
+

@@ -231,7 +231,7 @@ ip route add 192.168.10.1 dev eth0
 ip route add default via 192.168.10.1
 ip link set eth0 up
 dnf update -y
-dnf -y install openssh-server
+dnf -y install openssh-server net-tools
 /usr/bin/systemctl enable sshd
 sed -i 's/^PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 rm -f /etc/ssh/ssh_host_*
@@ -254,13 +254,13 @@ A workspace that will build a Puppet Master VM using template image created by P
 # BIND DNS
 **DIR/FILE:** ./puppet_code/production/my_modules/bind_dns/manifests/bind_dns.pp
 
-Why bind? Because I have worked on this extensively in my previous role.
+**Why bind?** Because I have worked on this extensively in my previous role.
 
 Puppet code will install required rpms and copy config files from files directory of the module.
 
 It is hosting family.net forward and reverse zone. Running on LXC container instead VM as it has one and only one simple job to do.
 
-
+Reference document [here](https://opensource.com/article/17/4/build-your-own-name-server)
 ---
 
 # kubernetes

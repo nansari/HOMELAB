@@ -57,7 +57,7 @@ resource "proxmox_vm_qemu" "puppet_vm" {
       # install Puppet server 7 plus agent on AlmaLinux 8
       # https://puppet.com/docs/puppet/7/install_and_configure.html
       "dnf install -y https://yum.puppet.com/puppet7-release-el-8.noarch.rpm",
-      "dnf install -y git puppetserver qemu-guest-agent",
+      "dnf install -y git puppetserver qemu-guest-agent gem",
       "sed -i 's/2g/1g/g' /etc/sysconfig/puppetserver",
       'echo JAVA_ARGS="$JAVA_ARGS -Djava.net.preferIPv4Stack=true" >> /etc/sysconfig/puppetserver',
       "echo 192.168.10.60 puppet.family.net puppet >> /etc/hosts",
@@ -72,6 +72,7 @@ resource "proxmox_vm_qemu" "puppet_vm" {
       "/opt/puppetlabs/bin/puppetserver ca list --all",
       "/usr/bin/systemctl enable puppetserver puppet qemu-guest-agent",
       "/usr/bin/systemctl start puppetserver puppet",
+      "gem install puppet-lint",
       "/opt/puppetlabs/bin/puppet agent -tv",
       "reboot",
     ]
