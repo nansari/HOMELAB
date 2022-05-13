@@ -3,11 +3,11 @@ class puppet::master {
   if $facts['hostname'] == 'puppet' {
     # section for only puppet master
     service { 'crond':
-        ensure => running;
+        ensure => 'running';
 
       'puppetserver':
-        ensure  => running,
-        enabled => true;
+        ensure => 'running',
+        enable => true;
     }
 
     cron {'update_code_on_puppet_master':
