@@ -6,4 +6,5 @@ common::resolv::nameservers:
  - 8.8.8.8
 #common::resolv::search: family.net some.other.domain.com
 common::resolv::search: family.net
+common::timezone::tz: "Asia/Singapore" 
 
