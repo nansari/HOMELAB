@@ -4,5 +4,6 @@ common::resolv::nameservers:
  - 192.168.10.53
  - 192.168.10.1
  - 8.8.8.8
-common::resolv::search: family.net some.other.domain.com
+#common::resolv::search: family.net some.other.domain.com
+common::resolv::search: family.net
 
