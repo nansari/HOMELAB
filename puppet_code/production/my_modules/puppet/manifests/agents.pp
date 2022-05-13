@@ -3,8 +3,8 @@ class puppet::agents {
   # on eavy system 
   $fqdn_agent_name = $facts['fqdn']
   service { 'puppet':
-      ensure  => 'running',
-      enabled => true;
+      ensure => 'running',
+      enable => true;
     }
   package { 'puppet-agent':
     ensure => 'installed',
