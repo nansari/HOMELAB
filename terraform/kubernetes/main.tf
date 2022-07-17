@@ -1,3 +1,10 @@
+
+# locals {
+#   k8smaster = compact([for hostname in var.buildhosts :contains(['k8smaster'], ) ? hostname : null])
+#   # https://www.terraform.io/language/functions/compact - doc under collection section of functions
+#   # https://www.terraform.io/language/functions/contains - determines whether a given list or set contains a given single value as one of its elements
+# }
+
 resource "proxmox_vm_qemu" "puppet_vm" {
   # https://registry.terraform.io/providers/Telmate/proxmox/latest/docs/resources/vm_qemu
   for_each = var.buildhosts
@@ -36,6 +43,7 @@ resource "proxmox_vm_qemu" "puppet_vm" {
       "/usr/bin/hostnamectl set-hostname ${each.value.hostname}",
       # install k8s - add command shere
       "/opt/puppetlabs/bin/puppet agent -tv",
+      "grep -w puppet /etc/hosts || echo 192.168.10.60 puppet puppet.family.net >> /etc/hosts",
       "reboot",
     ]
     on_failure = continue # applies only to the final command in the list

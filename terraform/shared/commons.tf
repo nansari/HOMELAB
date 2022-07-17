@@ -4,6 +4,7 @@ variable "common" {
     #TODO: also used in packer's variables.auto.pkrvars.hcl, can it be shared?
     # note that packer expect below as same name as node created in proxmox.
     #default = "https://192.168.10.50:8006/api2/json"  - does not work with packer
+    #TODO: /etc/hosts should have an entry for pve untill DNS resolver is fully fixed
     "pve_url"          = "https://pve:8006/api2/json"
     "pve_username"     = "root@pam"
     "ssh_username"     = "root"

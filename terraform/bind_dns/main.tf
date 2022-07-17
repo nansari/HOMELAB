@@ -44,6 +44,7 @@ resource "proxmox_lxc" "dns" {
       "dnf install -y openssh-server qemu-guest-agent",
       "/usr/bin/systemctl start sshd",
       "/usr/bin/systemctl enable sshd qemu-guest-agent",
+      "grep -w puppet /etc/hosts || echo 192.168.10.60 puppet puppet.family.net >> /etc/hosts",
       "reboot",
     ]
     on_failure = continue # applies only to the final command in the list
