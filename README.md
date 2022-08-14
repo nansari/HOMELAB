@@ -268,11 +268,16 @@ Reference document [here](https://opensource.com/article/17/4/build-your-own-nam
 Terraform will provision a master and 2 nodes using configuration [here](./terraform/kubernetes/)
 TODO: certificate creation and node join
 
+# PostgreSQL
+**DIR/FILE:** ./terraform/postgres/
+Run basic PostgreSQL create test DB and run commands via PgAdmin4
+
 # MySQL
 TODO
 
 # Jenkins
-TODO
+**DIR/FILE:** ./jenkins
+Run Jenkins in an docker image in a VM running AlmaLinux.
 
 # Final Section
 ## References
