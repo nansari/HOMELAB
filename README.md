@@ -277,7 +277,7 @@ TODO
 
 # Jenkins
 **DIR/FILE:** ./jenkins
-Run Jenkins in an docker image in a VM running AlmaLinux.
+Run Jenkins in a docker image in a VM running AlmaLinux.
 
 # Final Section
 ## References
