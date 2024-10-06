@@ -1,0 +1,19 @@
+pipeline {
+    agent any
+    parameters {
+        choice(choices: ["TEST", "DEV", "QA", "PROD"], description: "Which environment to deploy in?", name: "deployEnv")
+        booleanParam(defaultValue: true, description: "Restart service?", name: "restartService")
+    }
+    stages {
+        stage('choiceStep') {
+            steps {
+                echo "Choice is set to: ${params.deployEnv}"
+            }
+        }
+        stage('restartStep') {
+            steps {
+                echo "booleanParam is set to: ${params.restartService}"
+            }
+        }
+    }
+}

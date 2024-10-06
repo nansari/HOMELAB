@@ -1,0 +1,19 @@
+pipeline {
+    agent any
+    parameters {
+        booleanParam(defaultValue: false, description: "Enable service?", name: "enableService")
+        booleanParam(defaultValue: true, description: "Restart service?", name: "restartService")
+    }
+    stages {
+        stage('DemoStart') {
+            steps {
+                echo "booleanParam is set to: ${params.enableService}"
+            }
+        }
+        stage('DemoEnd') {
+            steps {
+                echo "booleanParam is set to: ${params.restartService}"
+            }
+        }
+    }
+}
